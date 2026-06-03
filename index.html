@@ -3,216 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Navigasi Gardu Lapangan</title>
+    <title>Navigasi Gardu</title>
     <link rel="manifest" href="manifest.json">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+    <meta name="theme-color" content="#0284c7">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 font-sans pb-12">
+<body class="bg-gray-100 font-sans pb-10">
 
     <header style="background-color: #0284c7 !important; color: #ffffff !important; padding: 16px; text-align: center; position: sticky; top: 0; z-index: 50; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
         <h1 style="font-size: 1.25rem; font-weight: 700; margin: 0; color: #ffffff !important;">⚡ GARDU BINTARO</h1>
         <p style="font-size: 0.75rem; opacity: 0.9; margin: 4px 0 0 0; color: #f0f9ff !important;">⚡ Navigasi Gardu</p>
     </header>
 
-    <div class="flex bg-white shadow-sm sticky top-16 z-40 mb-4">
-        <button id="tabCari" class="flex-1 py-3 text-center font-bold border-b-4 border-sky-600 text-sky-600 focus:outline-none" onclick="switchTab('cari')">🔍 Cari Gardu</button>
-        <button id="tabInput" class="flex-1 py-3 text-center font-bold border-b-4 border-transparent text-gray-500 focus:outline-none" onclick="switchTab('input')">➕ Tambah Gardu</button>
-    </div>
+    <main class="max-w-md mx-auto p-4 space-y-4">
+        
+        <div class="flex justify-between items-center">
+            <span class="text-xs text-gray-500 font-medium" id="totalInfo">Memuat data...</span>
+            <button id="btnToggleForm" class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-blue-200 transition">
+                ➕ Tambah Gardu Baru
+            </button>
+        </div>
 
-    <main class="max-w-md mx-auto px-4">
-
-        <section id="sectionCari" class="block">
-            <div class="bg-white p-4 rounded-xl shadow-sm mb-4">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Masukkan Nomor Gardu:</label>
-                <input type="text" id="searchInput" placeholder="Contoh: BT441 atau BT442..." class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 uppercase">
-                <p id="statusSync" class="text-xs text-gray-500 mt-2">Memeriksa data sheets...</p>
-            </div>
-
-            <div id="garduCard" class="bg-white rounded-xl shadow-md p-5 border border-gray-100 hidden">
-                <div class="flex justify-between items-center border-b pb-3 mb-3">
-                    <h2 id="garduId" class="text-2xl font-black text-gray-800">-</h2>
-                    <span id="jenisPelayanan" class="bg-sky-100 text-sky-800 text-xs font-bold px-2.5 py-1 rounded-full">-</span>
-                </div>
-                <div class="space-y-2.5 text-sm text-gray-600">
-                    <div class="flex justify-between"><span class="font-medium">Penyulang:</span><span id="penyulang" class="font-semibold text-gray-800">-</span></div>
-                    <div class="flex justify-between"><span class="font-medium">Gardu Induk:</span><span id="gi" class="font-semibold text-gray-800">-</span></div>
-                    <div class="flex justify-between"><span class="font-medium">Tipe / Jenis:</span><span id="tipeJenis" class="font-semibold text-gray-800">-</span></div>
-                    <div class="flex justify-between"><span class="font-medium">GFD & Status RC:</span><span id="gfdRc" class="font-semibold text-gray-800">-</span></div>
-                    <div class="border-t pt-2 mt-2">
-                        <span class="font-medium block mb-1">Alamat Lokasi:</span>
-                        <p id="alamat" class="text-xs text-gray-500 leading-relaxed">-</p>
-                    </div>
-                </div>
-                <a id="btnRute" href="#" target="_blank" class="mt-5 w-full bg-emerald-600 hover:bg-emerald-700 text-white text-center font-bold py-3 px-4 rounded-lg block shadow transition duration-200">
-                    🚀 Buka Rute Google Maps
-                </a>
-            </div>
-
-            <div id="notFound" class="bg-blue-50 border border-blue-200 text-blue-800 text-center p-4 rounded-xl text-sm shadow-sm">
-                Silakan ketik nomor gardu untuk melihat data lokasi.
-            </div>
-        </section>
-
-        <section id="sectionInput" class="hidden">
-            <form id="formGardu" class="bg-white p-5 rounded-xl shadow-md space-y-4 border border-gray-100">
-                <h3 class="text-lg font-bold text-gray-800 border-b pb-2">Form Data Gardu Baru</h3>
-                
+        <div id="formContainer" class="bg-white p-5 rounded-xl shadow-md border border-gray-200 hidden">
+            <h3 class="text-lg font-bold text-gray-800 mb-3 border-b pb-2">Form Data Gardu Baru</h3>
+            <form id="formGardu" class="space-y-3 text-sm">
                 <div>
-                    <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Nomor Gardu *</label>
-                    <input type="text" id="inGardu" required class="w-full p-2.5 border rounded-lg uppercase focus:ring-2 focus:ring-sky-500" placeholder="Contoh: BT445">
-                    <p id="warnDuplicate" class="text-xs text-red-600 font-bold mt-1 hidden">⚠️ ERROR: Nomor gardu ini sudah terdaftar! Petugas dilarang menduplikasi data.</p>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">No. Gardu *</label>
+                    <input type="text" id="inGardu" required placeholder="Contoh: BT441" class="w-full p-2 border rounded-md uppercase">
                 </div>
-
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Pelayanan</label>
-                        <input type="text" id="inPelayanan" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-sky-500" placeholder="BINTARO">
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Pelayanan</label>
+                        <input type="text" id="inPelayanan" placeholder="UMUM/KHUSUS" class="w-full p-2 border rounded-md">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Penyulang</label>
-                        <input type="text" id="inPenyulang" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-sky-500" placeholder="BANIT">
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Penyulang</label>
+                        <input type="text" id="inPenyulang" placeholder="Nama Penyulang" class="w-full p-2 border rounded-md">
                     </div>
                 </div>
-
-                <div class="grid grid-cols-3 gap-2">
+                <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block text-xs font-bold uppercase text-gray-500 mb-1">GI</label>
-                        <input type="text" id="inGi" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-sky-500" placeholder="BTR">
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Gardu Induk (GI)</label>
+                        <input type="text" id="inGi" placeholder="Nama GI" class="w-full p-2 border rounded-md">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Tipe</label>
-                        <input type="text" id="inTipe" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-sky-500" placeholder="PORTAL">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Jenis</label>
-                        <input type="text" id="inJenis" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-sky-500" placeholder="PELANGGAN">
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Tipe / Jenis</label>
+                        <input type="text" id="inTipeJenis" placeholder="KANTONG/PORTAL" class="w-full p-2 border rounded-md">
                     </div>
                 </div>
-
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block text-xs font-bold uppercase text-gray-500 mb-1">GFD</label>
-                        <input type="text" id="inGfd" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-sky-500" placeholder="ADA">
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">GFD</label>
+                        <input type="text" id="inGfd" placeholder="Ada/Tidak" class="w-full p-2 border rounded-md">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Status RC</label>
-                        <input type="text" id="inRc" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-sky-500" placeholder="RC">
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Status RC</label>
+                        <input type="text" id="inRc" placeholder="RC/NON RC" class="w-full p-2 border rounded-md">
                     </div>
                 </div>
-
                 <div>
-                    <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Alamat Lengkap</label>
-                    <textarea id="inAlamat" class="w-full p-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-sky-500" rows="2" placeholder="Jl. Raya Bintaro Sektor 9..."></textarea>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Alamat</label>
+                    <textarea id="inAlamat" placeholder="Nama jalan / patokan..." class="w-full p-2 border rounded-md h-16"></textarea>
                 </div>
-
                 <div>
-                    <label class="block text-xs font-bold uppercase text-gray-500 mb-1">Titik Koordinat / Link Maps *</label>
-                    <div class="flex gap-2">
-                        <input type="text" id="inLokasi" required class="w-full p-2.5 border rounded-lg text-xs focus:ring-2 focus:ring-sky-500" placeholder="-6.261849,106.758758">
-                        <button type="button" onclick="ambilLokasiHP()" class="bg-gray-200 px-3 rounded-lg text-sm font-bold hover:bg-gray-300">📍 GPS</button>
-                    </div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Link Google Maps (Titik Lokasi)</label>
+                    <input type="url" id="inLokasi" placeholder="https://maps.google.com/..." class="w-full p-2 border rounded-md">
                 </div>
-
-                <button type="submit" id="btnSimpan" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 rounded-lg shadow disabled:bg-gray-400 disabled:cursor-not-allowed">
-                    💾 Simpan Data Gardu
-                </button>
-                <p id="statusInput" class="text-xs text-center font-bold mt-2"></p>
+                <div class="flex space-x-2 pt-2">
+                    <button type="submit" class="flex-1 bg-blue-600 text-white font-semibold p-2.5 rounded-lg hover:bg-blue-700">Simpan Data</button>
+                    <button type="button" id="btnBatal" class="bg-gray-200 text-gray-700 p-2.5 rounded-lg hover:bg-gray-300">Batal</button>
+                </div>
             </form>
+        </div>
 
-            <div id="boxOffline" class="mt-4 bg-yellow-50 border border-yellow-200 rounded-xl p-4 hidden">
-                <h4 class="text-xs font-bold uppercase text-yellow-800 mb-2">⏳ Ada Data Offline Menunggu Sinyal:</h4>
-                <ul id="listOffline" class="text-xs text-gray-700 list-disc pl-4 space-y-1"></ul>
+        <div>
+            <input type="text" id="searchInput" placeholder="Ketik nomor gardu (Contoh: BT441)..." 
+                class="w-full p-3 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <div id="garduCard" class="bg-white p-5 rounded-xl shadow-md border border-gray-200 hidden">
+            <div class="flex justify-between items-center border-b pb-2 mb-3">
+                <h2 id="garduId" class="text-2xl font-bold text-blue-700"></h2>
+                <span id="jenisPelayanan" class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded"></span>
             </div>
-        </section>
+            
+            <div class="space-y-2 text-sm text-gray-700">
+                <p><strong>Penyulang:</strong> <span id="penyulang"></span></p>
+                <p><strong>Gardu Induk (GI):</strong> <span id="gi"></span></p>
+                <p><strong>Tipe / Jenis:</strong> <span id="tipeJenis"></span></p>
+                <p><strong>GFD / Status RC:</strong> <span id="gfdRc"></span></p>
+                <p class="pt-2 border-t"><strong>Alamat:</strong></p>
+                <p id="alamat" class="text-xs bg-gray-50 p-2 rounded italic text-gray-600"></p>
+            </div>
 
+            <a id="btnRute" href="#" target="_blank" 
+                class="mt-5 block w-full bg-green-600 text-white text-center font-semibold py-3 rounded-lg shadow hover:bg-green-700 transition">
+                Buka Rute Google Maps
+            </a>
+        </div>
+
+        <div id="notFound" class="text-center text-gray-500 mt-8">
+            Silakan ketik nomor gardu untuk melihat data lokasi.
+        </div>
     </main>
 
     <script>
-        // --- KONFIGURASI LINK DATA ANDA ---
-        const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/1ewphUaFZSepFq8rLuExfNGJNCMyFoGZsDy3c7gzxDYU/export?format=csv&gid=0';
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwT-CIfxZXB8KlrE2G0t3pljx_NNUokAhcU6DDcBOXsumJ9ONNInz2bjtVBNaJPe7cO/exec'; 
+        let cloudDatabase = []; 
+        let localDatabase = JSON.parse(localStorage.getItem('localAddedGardu')) || []; 
+        let databaseGardu = []; 
 
-        let databaseGardu = [];
-        let antreanOffline = JSON.parse(localStorage.getItem('antreanOffline')) || [];
+        const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1ewphUaFZSepFq8rLuExfNGJNCMyFoGZsDy3c7gzxDYU/export?format=csv&gid=0";
 
-        // 1. Inisialisasi Data Saat Buka Aplikasi
-        window.addEventListener('DOMContentLoaded', () => {
-            muatDataSheets();
-            renderAntreanOffline();
-            checkInternetDanKirim();
+        function gabungkanDanRender() {
+            databaseGardu = [...cloudDatabase, ...localDatabase];
+            document.getElementById('totalInfo').innerText = `Total: ${databaseGardu.length} Gardu (${localDatabase.length} Baru lokal)`;
+        }
+
+        // Antisipasi jika cache lokal sebelumnya rusak karena sempat menyimpan HTML error login Google
+        try {
+            const cachedSheets = localStorage.getItem('cachedDatabaseGardu');
+            if (cachedSheets && cachedSheets.startsWith('[')) { 
+                cloudDatabase = JSON.parse(cachedSheets);
+                gabungkanDanRender();
+            }
+        } catch(e) {
+            localStorage.removeItem('cachedDatabaseGardu');
+        }
+
+        // Ambil data dari Google Sheets dengan proteksi deteksi HTML (Halaman Login)
+        fetch(GOOGLE_SHEET_CSV_URL)
+            .then(res => {
+                const contentType = res.headers.get("content-type");
+                if (contentType && contentType.includes("text/html")) {
+                    throw new Error("Gagal! Google Sheets mengembalikan halaman Login HTML. Pastikan hak akses Google Sheets sudah diubah ke 'Siapa saja yang memiliki link'.");
+                }
+                return res.text();
+            })
+            .then(text => {
+                const lines = text.split(/\r?\n/).filter(line => line.trim() !== "");
+                if (lines.length > 0) {
+                    const splitCSVRow = (row) => row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(val => val.replace(/^"|"\$/g, '').trim());
+                    const headers = splitCSVRow(lines[0]);
+                    
+                    cloudDatabase = lines.slice(1).map(line => {
+                        let obj = {};
+                        const values = splitCSVRow(line);
+                        headers.forEach((header, index) => {
+                            obj[header] = values[index] || "";
+                        });
+                        return obj;
+                    });
+
+                    localStorage.setItem('cachedDatabaseGardu', JSON.stringify(cloudDatabase));
+                    console.log("Sinkronisasi Google Sheets Sukses!");
+                    gabungkanDanRender();
+                }
+            })
+            .catch(err => {
+                console.error("Gagal sinkronisasi Google Sheets:", err.message);
+                gabungkanDanRender();
+            });
+
+        // Kontrol Tampilan Form
+        const btnToggleForm = document.getElementById('btnToggleForm');
+        const formContainer = document.getElementById('formContainer');
+        const btnBatal = document.getElementById('btnBatal');
+
+        btnToggleForm.addEventListener('click', () => formContainer.classList.toggle('hidden'));
+        btnBatal.addEventListener('click', () => formContainer.classList.add('hidden'));
+
+        // Simpan Data Baru Manual
+        const formGardu = document.getElementById('formGardu');
+        formGardu.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const tipeJenisSplit = document.getElementById('inTipeJenis').value.split('/');
             
-            // Pasang detektor duplikasi saat petugas mengetik nomor gardu baru
-            document.getElementById('inGardu').addEventListener('input', cekValidasiDuplikat);
+            const newGardu = {
+                GARDU: document.getElementById('inGardu').value.toUpperCase().trim(),
+                PELAYANAN: document.getElementById('inPelayanan').value.toUpperCase() || "-",
+                PENYULANG: document.getElementById('inPenyulang').value.toUpperCase() || "-",
+                GI: document.getElementById('inGi').value.toUpperCase() || "-",
+                TIPE: (tipeJenisSplit[0] || "-").toUpperCase().trim(),
+                JENIS: (tipeJenisSplit[1] || "-").toUpperCase().trim(),
+                GFD: document.getElementById('inGfd').value.toUpperCase() || "-",
+                STATUS_RC: document.getElementById('inRc').value.toUpperCase() || "-",
+                ALAMAT: document.getElementById('inAlamat').value || "Alamat tidak tersedia.",
+                TITIK_LOKASI: document.getElementById('inLokasi').value || "#"
+            };
+
+            if (databaseGardu.some(g => g.GARDU === newGardu.GARDU)) {
+                alert(`Nomor Gardu ${newGardu.GARDU} sudah terdaftar!`);
+                return;
+            }
+
+            localDatabase.push(newGardu);
+            localStorage.setItem('localAddedGardu', JSON.stringify(localDatabase));
+            gabungkanDanRender();
+
+            formGardu.reset();
+            formContainer.classList.add('hidden');
+            
+            document.getElementById('searchInput').value = newGardu.GARDU;
+            document.getElementById('searchInput').dispatchEvent(new Event('input'));
+            
+            alert(`Gardu ${newGardu.GARDU} berhasil disimpan secara lokal!`);
         });
 
-        // 2. Fungsi Switch Tab Menu
-        function switchTab(tab) {
-            if(tab === 'cari') {
-                document.getElementById('sectionCari').classList.remove('hidden');
-                document.getElementById('sectionInput').classList.add('hidden');
-                document.getElementById('tabCari').className = "flex-1 py-3 text-center font-bold border-b-4 border-sky-600 text-sky-600 focus:outline-none";
-                document.getElementById('tabInput').className = "flex-1 py-3 text-center font-bold border-b-4 border-transparent text-gray-500 focus:outline-none";
-            } else {
-                document.getElementById('sectionCari').classList.add('hidden');
-                document.getElementById('sectionInput').classList.remove('hidden');
-                document.getElementById('tabCari').className = "flex-1 py-3 text-center font-bold border-b-4 border-transparent text-gray-500 focus:outline-none";
-                document.getElementById('tabInput').className = "flex-1 py-3 text-center font-bold border-b-4 border-sky-600 text-sky-600 focus:outline-none";
-            }
-        }
-
-        // 3. Fungsi Ambil Data dari Google Sheets (Download)
-        function muatDataSheets() {
-            const statusEl = document.getElementById('statusSync');
-            statusEl.innerText = "⏳ Sinkronisasi data sheets...";
-            
-            fetch(SHEET_CSV_URL)
-                .then(res => res.text())
-                .then(csvText => {
-                    parseCSV(csvText);
-                    statusEl.innerText = `✅ Sinkronisasi Berhasil! (${databaseGardu.length} Gardu Terkunci)`;
-                    statusEl.className = "text-xs text-emerald-600 font-bold mt-2";
-                })
-                .catch(err => {
-                    // Jika gagal (offline), muat data dari penyimpanan lokal sebelumnya
-                    const dataLokal = localStorage.getItem('cacheGardu');
-                    if(dataLokal) {
-                        databaseGardu = JSON.parse(dataLokal);
-                        statusEl.innerText = `⚠️ Mode Offline: Menggunakan data lokal (${databaseGardu.length} Gardu)`;
-                        statusEl.className = "text-xs text-amber-600 font-bold mt-2";
-                    } else {
-                        statusEl.innerText = "❌ Gagal sinkronisasi data awal. Perlu internet sekali untuk awal.";
-                        statusEl.className = "text-xs text-red-600 font-bold mt-2";
-                    }
-                });
-        }
-
-        // 4. Parser CSV ke Objek Javascript
-        function parseCSV(text) {
-            const lines = text.split('\n');
-            const headers = lines[0].split(',').map(h => h.trim().toUpperCase());
-            const tempDb = [];
-
-            for (let i = 1; i < lines.length; i++) {
-                if (!lines[i]) continue;
-                
-                // Ekspresi reguler untuk memisah CSV dengan aman walau ada koma di dalam tanda petik alamat
-                const matches = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || lines[i].split(',');
-                const rowData = {};
-                
-                headers.forEach((header, index) => {
-                    let value = matches[index] ? matches[index].trim() : '';
-                    rowData[header] = value.replace(/"/g, ''); // bersihkan tanda petik
-                });
-
-                if(rowData.GARDU) {
-                    tempDb.push(rowData);
-                }
-            }
-            databaseGardu = tempDb;
-            localStorage.setItem('cacheGardu', JSON.stringify(databaseGardu));
-        }
-
-        // 5. Logika Pencarian Data Gardu
+        // Logika Pencarian
         const searchInput = document.getElementById('searchInput');
         const garduCard = document.getElementById('garduCard');
         const notFound = document.getElementById('notFound');
@@ -222,16 +219,19 @@
             const data = databaseGardu.find(g => g.GARDU && g.GARDU.toUpperCase() === keyword); 
 
             if (data) {
+                // Membersihkan tanda petik ganda (") dari link lokasi jika ada akibat format CSV
                 let bersihLokasi = (data.TITIK_LOKASI || "#").replace(/"/g, '').trim();
 
                 document.getElementById('garduId').innerText = data.GARDU;
-                document.getElementById('jenisPelayanan').innerText = data.PELAYANAN || '-';
-                document.getElementById('penyulang').innerText = data.PENYULANG || '-';
-                document.getElementById('gi').innerText = data.GI || '-';
-                document.getElementById('tipeJenis').innerText = `${data.TIPE || '-'} / ${data.JENIS || '-'}`;
-                document.getElementById('gfdRc').innerText = `GFD: ${data.GFD || '-'} | RC: ${data.STATUS_RC || '-'}`;
-                document.getElementById('alamat').innerText = data.ALAMAT || '-';
-                document.getElementById('btnRute').href = bersihLokasi.startsWith('http') ? bersihLokasi : `https://www.google.com/maps/search/?api=1&query=${bersihLokasi}`;
+                document.getElementById('jenisPelayanan').innerText = data.PELAYANAN;
+                document.getElementById('penyulang').innerText = data.PENYULANG;
+                document.getElementById('gi').innerText = data.GI;
+                document.getElementById('tipeJenis').innerText = `${data.TIPE} / ${data.JENIS}`;
+                document.getElementById('gfdRc').innerText = `GFD: ${data.GFD} | RC: ${data.STATUS_RC}`;
+                document.getElementById('alamat').innerText = data.ALAMAT;
+                
+                // Memasukkan link yang sudah bersih tanpa tanda petik ke tombol rute
+                document.getElementById('btnRute').href = bersihLokasi;
 
                 garduCard.classList.remove('hidden');
                 notFound.classList.add('hidden');
@@ -242,157 +242,8 @@
             }
         });
 
-        // 6. DETEKTOR DUPLIKASI KETAT (Mencegah Penumpukan Data)
-        function cekValidasiDuplikat() {
-            const inputNomor = document.getElementById('inGardu').value.toUpperCase().trim();
-            const warnEl = document.getElementById('warnDuplicate');
-            const btnSimpan = document.getElementById('btnSimpan');
-
-            if(!inputNomor) {
-                warnEl.classList.add('hidden');
-                btnSimpan.disabled = false;
-                return;
-            }
-
-            // Cek 1: Apakah sudah terdaftar di database utama Sheets?
-            const adaDiSheets = databaseGardu.some(g => g.GARDU && g.GARDU.toUpperCase() === inputNomor);
-            
-            // Cek 2: Apakah ada di dalam antrean offline lokal yang belum tersinkron?
-            const adaDiAntreanOffline = antreanOffline.some(g => g.GARDU.toUpperCase() === inputNomor);
-
-            if (adaDiSheets || adaDiAntreanOffline) {
-                warnEl.classList.remove('hidden'); // Munculkan peringatan merah
-                btnSimpan.disabled = true;          // Blokir tombol simpan total
-            } else {
-                warnEl.classList.add('hidden');
-                btnSimpan.disabled = false;
-            }
-        }
-
-        // 7. Ambil Koordinat Otomatis Menggunakan GPS HP Petugas
-        function ambilLokasiHP() {
-            const inLokasi = document.getElementById('inLokasi');
-            if (navigator.geolocation) {
-                inLokasi.placeholder = "🌐 Mengunci GPS...";
-                navigator.geolocation.getCurrentPosition((position) => {
-                    inLokasi.value = `${position.coords.latitude},${position.coords.longitude}`;
-                }, () => {
-                    alert("Gagal ambil GPS. Pastikan izin lokasi HP Anda sudah menyala.");
-                    inLokasi.placeholder = "-6.261849,106.758758";
-                });
-            } else {
-                alert("HP Anda tidak mendukung fitur GPS Geolocation.");
-            }
-        }
-
-        // 8. Handle Submit Form Input Gardu Baru
-        document.getElementById('formGardu').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Kumpulkan data inputan
-            const dataBaru = {
-                GARDU: document.getElementById('inGardu').value.toUpperCase().trim(),
-                PELAYANAN: document.getElementById('inPelayanan').value.toUpperCase().trim() || 'BINTARO',
-                PENYULANG: document.getElementById('inPenyulang').value.toUpperCase().trim() || '-',
-                GI: document.getElementById('inGi').value.toUpperCase().trim() || '-',
-                TIPE: document.getElementById('inTipe').value.toUpperCase().trim() || '-',
-                JENIS: document.getElementById('inJenis').value.toUpperCase().trim() || '-',
-                GFD: document.getElementById('inGfd').value.toUpperCase().trim() || '-',
-                STATUS_RC: document.getElementById('inRc').value.toUpperCase().trim() || '-',
-                ALAMAT: document.getElementById('inAlamat').value.trim() || '-',
-                TITIK_LOKASI: document.getElementById('inLokasi').value.trim()
-            };
-
-            // Proteksi Lapangan Terakhir (Double Check)
-            if (databaseGardu.some(g => g.GARDU === dataBaru.GARDU) || antreanOffline.some(g => g.GARDU === dataBaru.GARDU)) {
-                alert("Maaf, data gardu tersebut sudah ada. Input digagalkan.");
-                return;
-            }
-
-            const txtStatus = document.getElementById('statusInput');
-            txtStatus.innerText = "⏳ Memproses data...";
-            txtStatus.className = "text-xs text-center font-bold mt-2 text-gray-500";
-
-            // Cek kondisi jaringan internet HP petugas
-            if (navigator.onLine) {
-                // Sinyal Bagus -> Langsung kirim ke Google Sheets detik itu juga
-                kirimKeGoogleSheets(dataBaru, (sukses, msg) => {
-                    if(sukses) {
-                        txtStatus.innerText = "🚀 Sukses! Data masuk ke Google Sheets.";
-                        txtStatus.className = "text-xs text-center font-bold mt-2 text-emerald-600";
-                        document.getElementById('formGardu').reset();
-                        muatDataSheets(); // Tarik data baru agar pencarian ter-update
-                    } else {
-                        txtStatus.innerText = "❌ " + msg;
-                        txtStatus.className = "text-xs text-center font-bold mt-2 text-red-600";
-                    }
-                });
-            } else {
-                // Sinyal Putus (Offline) -> Masukkan ke memori internal (Antrean)
-                antreanOffline.push(dataBaru);
-                localStorage.setItem('antreanOffline', JSON.stringify(antreanOffline));
-                renderAntreanOffline();
-                
-                txtStatus.innerText = "💾 Sinyal kosong! Data tersimpan aman di memori HP.";
-                txtStatus.className = "text-xs text-center font-bold mt-2 text-amber-600";
-                document.getElementById('formGardu').reset();
-            }
-        });
-
-        // 9. Eksekusi Pengiriman HTTP POST ke Google Web App
-        function kirimKeGoogleSheets(data, callback) {
-            fetch(APPS_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors', // Mode no-cors wajib dipasang untuk bypass masalah CORS Apps Script
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            })
-            .then(() => {
-                // Karena no-cors tidak mengembalikan respon JSON, kita asumsikan data sukses terkirim ke server
-                callback(true, "Berhasil");
-            })
-            .catch(err => {
-                callback(false, err.toString());
-            });
-        }
-
-        // 10. Tampilkan List Gardu yang Terkunci secara Offline di HP
-        function renderAntreanOffline() {
-            const box = document.getElementById('boxOffline');
-            const list = document.getElementById('listOffline');
-            list.innerHTML = "";
-            
-            if(antreanOffline.length > 0) {
-                box.classList.remove('hidden');
-                antreanOffline.forEach(g => {
-                    const li = document.createElement('li');
-                    li.innerText = `Gardu ${g.GARDU} (Menunggu Sinyal)`;
-                    list.appendChild(li);
-                });
-            } else {
-                box.classList.add('hidden');
-            }
-        }
-
-        // 11. Sinkronisasi Otomatis saat HP Mendapatkan Sinyal Kembali
-        function checkInternetDanKirim() {
-            window.addEventListener('online', () => {
-                if(antreanOffline.length === 0) return;
-                
-                console.log("Sinyal kembali didapat! Mengirim data antrean...");
-                
-                // Kirim satu per satu data dari antrean offline ke Google Sheets
-                let item = antreanOffline[0];
-                kirimKeGoogleSheets(item, (sukses) => {
-                    if(sukses) {
-                        antreanOffline.shift(); // Hapus item pertama yang sudah lolos kirim
-                        localStorage.setItem('antreanOffline', JSON.stringify(antreanOffline));
-                        renderAntreanOffline();
-                        muatDataSheets();
-                        checkInternetDanKirim(); // Rekursif panggil sampai antrean habis
-                    }
-                });
-            });
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); });
         }
     </script>
 </body>

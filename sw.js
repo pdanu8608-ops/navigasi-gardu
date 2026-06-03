@@ -1,4 +1,4 @@
-const CACHE_NAME = 'nav-gardu-v6'; // Naikkan versi cache
+const CACHE_NAME = 'nav-gardu-v5'; // Naikkan versi cache
 const ASSETS = [
   './',
   'index.html',
